@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# custom for this module
+dungeon*.csv
+
 # C extensions
 *.so
 
