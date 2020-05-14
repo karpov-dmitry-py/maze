@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 
 # Подземелье было выкопано ящеро-подобными монстрами рядом с аномальной рекой, постоянно выходящей из берегов.
 # Из-за этого подземелье регулярно затапливается, монстры выживают, но не герои, рискнувшие спуститься к ним в поисках
@@ -106,9 +106,9 @@ import os.path
 from decimal import *
 from collections import defaultdict
 
-class Player():
 
-    # getcontext().prec = 10
+class Player:
+
     remaining_time_str = '123456.0987654321'
     exp_required_to_open_hatch = 280
     exp_re_pattern = re.compile(r'exp([0-9]+)_')
@@ -131,10 +131,10 @@ class Player():
 
     def __init__(self, name='Lucky bastard'):
         self.name = name
-        self.state = {'location':'cave entrance', 'experience':0}
+        self.state = {'location': 'cave entrance', 'experience': 0}
         self.history = []
         self.remaining_time = Decimal(Player.remaining_time_str)
-        self.killed_mobs = self._get_killed_mobs_new_dict() # убитые в рамках одной конкретной локации мобы
+        self.killed_mobs = self._get_killed_mobs_new_dict()  # убитые в рамках одной конкретной локации мобы
         self._capture_current_state()
         self.log('***** --------------- НАЧИНАЕТСЯ НОВАЯ ИГРА --------------- *****\n\n')
 
@@ -160,7 +160,6 @@ class Player():
         if not int(time_spent_on_object):
             return
 
-        time_spent_on_object = time_spent_on_object.quantize(Decimal("1.00000"), rounding=ROUND_HALF_EVEN)
         self.remaining_time -= time_spent_on_object
 
     def _capture_current_state(self, location=None, experience=0):
@@ -186,7 +185,7 @@ class Player():
                     writer.writerow(state)
                 except ValueError as exc:
                     self.log(f'Возникла ошибка при записи истории игрока {self.name} в csv-файл: '
-                          f'{exc.__class__.__name__}, {exc.args}')
+                             f'{exc.__class__.__name__}, {exc.args}')
             self.log(f'История игры игрока "{self.name}" сохранена в файл: {out_filename}')
 
     def _get_location_as_str(self, location: (dict, str)):
@@ -196,7 +195,7 @@ class Player():
     def _get_available_actions(self, location: dict):
 
         location_as_str = self._get_location_as_str(location)
-        location_content = location.get(location_as_str) # содержимое текущей локации по ключу-имени локации
+        location_content = location.get(location_as_str)  # содержимое текущей локации по ключу-имени локации
         actions = []
 
         #  все мобы в этой локации
@@ -272,9 +271,7 @@ class Player():
                 bad_input = False
                 continue
 
-            break
-
-        return actions[choice-1]
+            return actions[choice - 1]
 
     def _fight_mob(self, mob: str):
 
@@ -300,7 +297,7 @@ class Player():
 
     def _is_game_over(self):
 
-        game_over = self.remaining_time < 0
+        game_over = self.remaining_time <= 0
         if game_over:
             self.log('Вы не успели! Время закончилось! Игра завершена!\n')
             return True
@@ -326,6 +323,7 @@ class Player():
         # проверка наличия люка
         if self._is_hatch(self.state['location']):
             self.log('Ура! Вот и люк! Вы выбрались! Игра успешно пройдена!')
+            self._capture_current_state(location='cave exit')
             return
 
         # доступные действия
@@ -367,8 +365,8 @@ class Player():
             # возврат в меню текущей локации
             self.handle_location(location, first_time_here=False)
 
-def new_game(maze):
 
+def new_game(maze):
     player = Player()
     player.handle_location(maze)
     player.save_history()
@@ -381,20 +379,17 @@ def new_game(maze):
         player = None
         new_game(maze)
 
-def main():
 
+def main():
     Player._setup_logging()
 
     with open('rpg.json') as source:
         maze = json.load(source)
 
     with localcontext() as ctx:
-        ctx.prec = 10
+        ctx.prec = 50
         new_game(maze)
+
 
 if __name__ == '__main__':
     main()
-
-
-
-
