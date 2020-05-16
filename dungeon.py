@@ -205,7 +205,7 @@ class Player:
                 continue
             mobs[mob] += 1
 
-        # оставим только живых (еше не убитых) мобов в этой локации
+        # оставим только живых (еще не убитых) мобов в этой локации
         for mob, killed_count in self.killed_mobs.items():
             mobs[mob] -= killed_count
 
@@ -349,7 +349,9 @@ class Player:
 
         elif chosen_action['type'] == 'hatch':
 
+            # проверка опыта
             exp_lack = Player.exp_required_to_open_hatch - self.state['experience']
+
             # возврат в меню текущей локации
             if exp_lack > 0:
                 self.log(f'Не хватает опыта для открытия люка: {exp_lack}! Сразитесь с монстрами для увеличения опыта!')
@@ -371,6 +373,7 @@ def new_game(maze):
     player.handle_location(maze)
     player.save_history()
 
+    # начать новую игру
     expected_yes = 'Y'
     player.log(f'Начать новую игру? (введите {expected_yes} для начала новой игры) >>>> ')
     play_again = input() == expected_yes
